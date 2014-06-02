@@ -558,27 +558,24 @@ def cleanupFiles(albumpath):
     logger.info('Cleaning up files')
     for r,d,f in os.walk(albumpath):
         for files in f:
-            if not any(files.lower().endswith('.' + x.lower()) for x in headphones.MEDIA_FORMATS) or not (headphones.KEEP_NFO and files.lower().endswith('.nfo')):
-                logger.debug('Removing: %s' % files)
-                try:
-                    os.remove(os.path.join(r, files))
-                except Exception, e:
-                    logger.error(u'Could not remove file: %s. Error: %s' % (files.decode(headphones.SYS_ENCODING, 'replace'), e))
+            if not any(files.lower().endswith('.' + x.lower()) for x in headphones.MEDIA_FORMATS):
+                if not (headphones.KEEP_NFO and files.lower().endswith('.nfo')):
+                    logger.debug('Removing: %s' % files)
+                    try:
+                        os.remove(os.path.join(r, files))
+                    except Exception, e:
+                        logger.error(u'Could not remove file: %s. Error: %s' % (files.decode(headphones.SYS_ENCODING, 'replace'), e))
 
 def renameNFO(albumpath):
     for r,d,f in os.walk(albumpath):
         for file in f:
             if file.lower().endswith('.nfo'):
-                logger.debug('Renaming: "%s" to "%s"' % (files.decode(headphones.SYS_ENCODING, 'replace'), files.decode(headphones.SYS_ENCODING, 'replace') + '-orig'))
-            try:
-                basename = os.path.basename(files.decode(headphones.SYS_ENCODING, 'replace'))
-                title = os.path.splitext(basename)[0]
-                ext = os.path.splitext(basename)[1]
-            
-                new_file_name = helpers.cleanTitle(title) + ext + '-orig'
-                os.rename(basename+title+ext, new_file_name)
-            except Exception, e:
-                logger.error(u'Could not rename file: %s. Error: %s' % (files.decode(headphones.SYS_ENCODING, 'replace'), e))
+                logger.debug('Renaming: "%s" to "%s"' % (file.decode(headphones.SYS_ENCODING, 'replace'), file.decode(headphones.SYS_ENCODING, 'replace') + '-orig'))
+                try:          
+                    new_file_name = os.path.join(r, file) + '-orig'
+                    os.rename(os.path.join(r, file), new_file_name)
+                except Exception, e:
+                    logger.error(u'Could not rename file: %s. Error: %s' % (os.path.join(r, file).decode(headphones.SYS_ENCODING, 'replace'), e))
                     
 def moveFiles(albumpath, release, tracks):
 
