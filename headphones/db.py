@@ -62,7 +62,7 @@ class DBConnection:
         sqlResult = None
         attempt = 0
         
-        if inspect.getframeinfo(inspect.currentframe().f_back)[2] not in ('select', 'upsert'):
+        if inspect.getframeinfo(inspect.currentframe().f_back)[2] not in ('select', 'upsert', 'render_body', 'getArtistjson'):
             loggedargs = ''
             if args != None:
                 loggedargs = args
@@ -95,10 +95,10 @@ class DBConnection:
     
     def select(self, query, args=None):
         
-        if inspect.getframeinfo(inspect.currentframe().f_back)[2] not in ('render_body'):
+        if inspect.getframeinfo(inspect.currentframe().f_back)[2] not in ('render_body', 'getArtistjson'):
             logger.info("Select query was called from: %s" % inspect.getframeinfo(inspect.currentframe().f_back)[2].decode(headphones.SYS_ENCODING, 'replace'))
         sqlResults = self.action(query, args).fetchall()
-        if inspect.getframeinfo(inspect.currentframe().f_back)[2] not in ('render_body'):
+        if inspect.getframeinfo(inspect.currentframe().f_back)[2] not in ('render_body', 'getArtistjson'):
             loggedargs = ''
             if args != None:
                 loggedargs = args
