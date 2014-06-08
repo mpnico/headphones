@@ -123,5 +123,5 @@ class DBConnection:
         if self.connection.total_changes == changesBefore:
             query = "INSERT INTO "+tableName+" (" + ", ".join(valueDict.keys() + keyDict.keys()) + ")" + \
                         " VALUES (" + ", ".join(["?"] * len(valueDict.keys() + keyDict.keys())) + ")"
-            logger.info("Database insert was: %s" % query.decode(headphones.SYS_ENCODING, 'replace'))             
+            logger.info("Database insert was: %s with values: %s" % (query.decode(headphones.SYS_ENCODING, 'replace'), valueDict.values().decode(headphones.SYS_ENCODING, 'replace'))             
             self.action(query, valueDict.values() + keyDict.values())
