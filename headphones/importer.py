@@ -229,7 +229,7 @@ def addArtisttoDB(artistid, extrasonly=False, forcefull=False):
         pause_delta = headphones.MB_IGNORE_AGE
         
         rg_exists = myDB.action("SELECT * from albums WHERE AlbumID=?", [rg['id']]).fetchone()
-        logger.info("rg_exists is: %s" % rg_exists..decode(headphones.SYS_ENCODING, 'replace'))
+        logger.info("rg_exists is: %s" % rg_exists)
 
         if not forcefull:
         
