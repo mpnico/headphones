@@ -23,6 +23,7 @@ import os
 import sqlite3
 import threading
 import time
+import inspect
 
 import headphones
 
@@ -61,6 +62,13 @@ class DBConnection:
         sqlResult = None
         attempt = 0
         
+        if inspect.getframeinfo(inspect.currentframe().f_back)[2] not in ('select', 'upsert'):
+            loggedargs = ''
+            if args != None:
+                loggedargs = args
+            logger.info("Undetermined query type was called from: %s" % inspect.getframeinfo(inspect.currentframe().f_back)[2].decode(headphones.SYS_ENCODING, 'replace'))
+            logger.info("Database query was: %s with args: %s" % (query.decode(headphones.SYS_ENCODING, 'replace'), loggedargs))
+        
         while attempt < 5:
             try:
                 if args == None:
@@ -86,8 +94,15 @@ class DBConnection:
         return sqlResult
     
     def select(self, query, args=None):
-    
+        
+        if inspect.getframeinfo(inspect.currentframe().f_back)[2] not in ('render_body'):
+            logger.info("Select query was called from: %s" % inspect.getframeinfo(inspect.currentframe().f_back)[2].decode(headphones.SYS_ENCODING, 'replace'))
         sqlResults = self.action(query, args).fetchall()
+        if inspect.getframeinfo(inspect.currentframe().f_back)[2] not in ('render_body'):
+            loggedargs = ''
+            if args != None:
+                loggedargs = args
+            logger.info("Database select was: %s with args: %s" % (query.decode(headphones.SYS_ENCODING, 'replace'), loggedargs))
         
         if sqlResults == None:
             return []
@@ -96,6 +111,7 @@ class DBConnection:
                     
     def upsert(self, tableName, valueDict, keyDict):
     
+        logger.info("upsert query was called from: %s" % inspect.getframeinfo(inspect.currentframe().f_back)[2].decode(headphones.SYS_ENCODING, 'replace'))
         changesBefore = self.connection.total_changes
         
         genParams = lambda myDict : [x + " = ?" for x in myDict.keys()]
@@ -107,4 +123,5 @@ class DBConnection:
         if self.connection.total_changes == changesBefore:
             query = "INSERT INTO "+tableName+" (" + ", ".join(valueDict.keys() + keyDict.keys()) + ")" + \
                         " VALUES (" + ", ".join(["?"] * len(valueDict.keys() + keyDict.keys())) + ")"
+            logger.info("Database insert was: %s" % query.decode(headphones.SYS_ENCODING, 'replace'))             
             self.action(query, valueDict.values() + keyDict.values())
