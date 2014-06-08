@@ -223,11 +223,13 @@ def addArtisttoDB(artistid, extrasonly=False, forcefull=False):
         al_title = rg['title']
         today = helpers.today()
         rgid = rg['id']
+        logger.info("rg['id'] is: %s" % rgid.decode(headphones.SYS_ENCODING, 'replace'))
         skip_log = 0
         #Make a user configurable variable to skip update of albums with release dates older than this date (in days)
         pause_delta = headphones.MB_IGNORE_AGE
         
         rg_exists = myDB.action("SELECT * from albums WHERE AlbumID=?", [rg['id']]).fetchone()
+        logger.info("rg_exists is: %s" % rg_exists..decode(headphones.SYS_ENCODING, 'replace'))
 
         if not forcefull:
         
@@ -387,8 +389,10 @@ def addArtisttoDB(artistid, extrasonly=False, forcefull=False):
             
             if not rg_exists:
                 releaseid = rg['id']
+                logger.info("**** releaseid variable = rg['id'] *****") 
             else:
                 releaseid = rg_exists['ReleaseID']
+                logger.info("**** releaseid variable = rg_exists['ReleaseID'] ****")
 
             album = myDB.action('SELECT * from allalbums WHERE ReleaseID=?', [releaseid]).fetchone()
 
